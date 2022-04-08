@@ -124,20 +124,28 @@
         </div>
         <div class="row justify-content-center">
           <div class="col-md-7">
-            <form>
+            <div class="alert alert-success alert-dismissible fade show d-none my-alert" role="alert">
+              <strong>Thankyou!</strong> Your message has been sent.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <form name="contact-form">
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" aria-describedby="name" placeholder="Your full name" />
+                <input type="text" class="form-control" id="name" aria-describedby="name" placeholder="Your full name" name="name" />
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" aria-describedby="email" placeholder="name@gmail.com" />
+                <input type="email" class="form-control" id="email" aria-describedby="email" placeholder="Your@gmail.com" name="email" />
               </div>
               <div class="mb-3">
                 <label for="message" class="form-label">Message</label>
-                <textarea class="form-control" id="message" rows="5" placeholder="Your message"></textarea>
+                <textarea class="form-control" id="message" rows="5" placeholder="Your message" name="message"></textarea>
               </div>
-              <button type="submit" class="btn btn-success">Submit</button>
+              <button type="submit" class="btn btn-primary btn-send">Send</button>
+              <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Loading...
+              </button>
             </form>
           </div>
         </div>
@@ -158,5 +166,33 @@
     </footer>
     <!-- End of Footer -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <script>
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwhdq_l6tqbS3FVeetLLDVrRKk7s5AmRZjMhjl_FDSN27FeXQABes0O9sVz8MUUiOmSNA/exec";
+      const form = document.forms["contact-form"];
+      const btnSend = document.querySelector(".btn-send");
+      const btnLoading = document.querySelector(".btn-loading");
+      const myAlert = document.querySelector(".my-alert");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        // ketika tombol send di klik
+        // tampilkan tombol loading, hilangkan tombol send
+        btnLoading.classList.toggle("d-none");
+        btnSend.classList.toggle("d-none");
+        fetch(scriptURL, { method: "POST", body: new FormData(form) })
+          .then((response) => {
+            // tampilkan tombol send, hilangkan tombol loading
+            btnLoading.classList.toggle("d-none");
+            btnSend.classList.toggle("d-none");
+            // tampilkan alert
+            myAlert.classList.toggle("d-none");
+            // reset form
+            form.reset();
+            console.log("Success!", response);
+          })
+          .catch((error) => console.error("Error!", error.message));
+      });
+    </script>
   </body>
 </html>
